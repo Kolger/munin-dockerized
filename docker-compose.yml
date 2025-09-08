@@ -1,0 +1,14 @@
+services:
+  munin:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "${NGINX_PORT_HTTP:-80}:80"
+    volumes:
+      - ./data/munin/lib:/var/lib/munin
+      - ./data/munin/www:/var/www/munin
+      - ./data/log/nginx:/var/log/nginx
+      - ./data/log/munin:/var/log/munin
