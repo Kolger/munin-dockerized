@@ -12,3 +12,4 @@ services:
       - ./data/munin/www:/var/www/munin
       - ./data/log/nginx:/var/log/nginx
       - ./data/log/munin:/var/log/munin
+    restart: unless-stopped

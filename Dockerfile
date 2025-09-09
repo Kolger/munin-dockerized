@@ -2,7 +2,9 @@ FROM debian:13-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y munin munin-node nginx dumb-init sudo cron tzdata spawn-fcgi libfcgi-perl
+RUN apt-get update && apt-get install -y \
+    munin munin-node nginx dumb-init sudo cron tzdata \
+    spawn-fcgi libfcgi-perl libcgi-fast-perl rrdcached
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
       msmtp-mta ca-certificates s-nail \

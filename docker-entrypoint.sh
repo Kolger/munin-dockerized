@@ -83,6 +83,19 @@ fi
 
 ### End of dynamic config
 
+
+
+echo "Starting rrdcached"
+sudo -u munin -- mkdir -p /var/lib/munin/rrdcached-journal
+chown munin:munin /var/lib/munin/rrdcached-journal
+rm -f /var/run/munin/rrdcached.pid || true
+sudo -u munin -- /usr/bin/rrdcached \
+  -p /var/run/munin/rrdcached.pid \
+  -B -b /var/lib/munin/ \
+  -F -j /var/lib/munin/rrdcached-journal/ \
+  -m 0660 -l unix:/var/run/munin/rrdcached.sock \
+  -w 1800 -z 1800 -f 3600
+
 echo "Starting munin-cron once to create the database"
 sudo -u munin /usr/bin/munin-cron munin
 
@@ -90,13 +103,22 @@ echo "Starting cron"
 /usr/sbin/cron -f &
 
 echo "Starting munin-cgi-graph (spawn-fcgi)"
-rm -f /var/run/munin/fcgi-graph.sock || true
+rm -f /var/run/munin/fastcgi-graph.sock || true
 sudo -u munin spawn-fcgi \
   -f /usr/lib/munin/cgi/munin-cgi-graph \
-  -s /var/run/munin/fcgi-graph.sock \
+  -s /var/run/munin/fastcgi-graph.sock \
   -U munin -G munin -M 777 \
   -u munin -g munin -F 1
-sudo chmod 777 /var/run/munin/fcgi-graph.sock || true
+sudo chmod 777 /var/run/munin/fastcgi-graph.sock || true
+
+echo "Starting munin-cgi-html (spawn-fcgi)"
+rm -f /var/run/munin/fastcgi-html.sock || true
+sudo -u munin spawn-fcgi \
+  -f /usr/lib/munin/cgi/munin-cgi-html \
+  -s /var/run/munin/fastcgi-html.sock \
+  -U munin -G munin -M 777 \
+  -u munin -g munin -F 1
+sudo chmod 777 /var/run/munin/fastcgi-html.sock || true
 
 echo "Starting nginx (foreground)"
 nginx -g 'daemon off;'
