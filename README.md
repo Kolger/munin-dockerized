@@ -1,7 +1,7 @@
 Munin Docker Stack
 ==================
 
-Production‑ready Munin master in Docker (Debian 13). It renders static HTML via cron, optionally serves on‑the‑fly graphs via FastCGI, and supports e‑mail alerts via msmtp. Nodes and contacts are generated from environment variables.
+Production‑ready Munin master in Docker (Debian 13). It serves on‑demand HTML and graphs via FastCGI, uses rrdcached to batch RRD writes, and supports e‑mail alerts via msmtp. Nodes and contacts are generated from environment variables.
 
 Quick Start
 -----------
@@ -21,10 +21,10 @@ Quick Start
 Features
 --------
 
-- Static HTML generation by cron (default)
-- CGI graph rendering (FastCGI on `/munin-cgi/munin-cgi-graph/`)
-- E‑mail alerts using your own SMTP server (off by default)
-- Nodes/contacts generated from `.env`
+- On‑demand HTML and graph rendering via FastCGI (default)
+- rrdcached enabled for reduced disk I/O
+- E‑mail alerts using your own SMTP server (opt‑in)
+- Nodes/contacts generated from environment
 - Timezone configurable via `TZ`
 - Bind mounts for persistence under `./data`
 
@@ -52,7 +52,7 @@ Parameter Table
 | `NGINX_PORT_HTTP` | `80` | Host port mapped to container `80/tcp`. | `82` |
 | `TZ` | `UTC` | Container timezone. | `Europe/Moscow` |
 | `USE_MAIL_NOTIFICATIONS` | `0` | Enable e‑mail alerts (`1` to enable). | `1` |
-| `NODES` | empty | Multi‑line `name:address` pairs (one per line). | `server1:10.0.0.101`<br>`server2:10.0.0.102` |
+| `NODES` | empty | Multi‑line `name:address` pairs (one per line). Prefer defining in compose `environment` using a block scalar. | `server1:10.0.0.101`<br>`server2:10.0.0.102` |
 | `ALERT_FROM` | — | Envelope sender for alerts (used when mail is enabled). | `noreply@example.com` |
 | `ALERT_TO` | — | Space‑separated recipient list (used when mail is enabled). | `ops@example.com` |
 | `SMTP_HOST` | — | SMTP server host (mail on). | `smtp.example.com` |
